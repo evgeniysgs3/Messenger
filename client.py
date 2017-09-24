@@ -1,5 +1,6 @@
 import json
 import sys
+import argparse
 import time
 from socket import *
 
@@ -8,11 +9,11 @@ MAX_DATA_RECEIVE = 1024
 
 class Client:
 
-    def __init__(self, ip='127.0.0.1', port=8080):
+    def __init__(self, addr, port):
         self.account_name = input("Введите имя пользователя:")
         try:
             self.sock = socket(AF_INET, SOCK_STREAM)
-            self.sock.connect((ip, port))
+            self.sock.connect((addr, port))
         except OSError as socket_connect_error:
             print("Ошибка подключения к серверу: {}".format(
                 socket_connect_error)
@@ -57,6 +58,36 @@ class Client:
                 unserialized_data['error']
             ))
 
-client = Client()
-client.send_presence_msg()
-client.receive_response_from_server()
+
+def create_parser():
+    parser = argparse.ArgumentParser(
+        prog='client',
+        description=
+        """
+        Клиентская часть мессенджера.
+        """,
+        epilog=
+        """
+        (c) September 2017.
+        """
+    )
+    parser.add_argument(
+        '-p', '--port', type=int, default=7777, help="""
+        Порт на котором работает сервер"""
+    )
+    parser.add_argument(
+        '-a', '--addr', default='127.0.0.1', help="""
+        IP-адрес для подключения к серверу.
+        """
+    )
+    return parser
+
+
+if __name__ == '__main__':
+    parser = create_parser()
+    namespace = parser.parse_args(sys.argv[1:])
+    addr = namespace.addr
+    port = namespace.port
+    client = Client(addr, port)
+    client.send_presence_msg()
+    client.receive_response_from_server()

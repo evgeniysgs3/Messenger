@@ -1,6 +1,7 @@
 import json
 import sys
 import time
+import argparse
 from socket import *
 
 MAX_DATA_RECEIVE = 1024
@@ -9,10 +10,10 @@ MAX_CLIENT_CONNECTION = 10
 
 class Server:
 
-    def __init__(self, port=8080):
+    def __init__(self, addr, port):
         try:
             self.sock = socket(AF_INET, SOCK_STREAM)
-            self.sock.bind(('', port))
+            self.sock.bind((addr, port))
             self.sock.listen(MAX_CLIENT_CONNECTION)
         except OSError as start_server_error:
             print("Ошибка при запуске сервера: {}".format(start_server_error))
@@ -66,5 +67,34 @@ class Server:
             print("Ошибка при отправки сообщения клиенту {}: {}".format(account_name, err))
 
 
-server = Server()
-server.start()
+def create_parser():
+    parser = argparse.ArgumentParser(
+        prog='server',
+        description=
+        """
+        Серверная часть мессенджера.
+        """,
+        epilog=
+        """
+        (c) September 2017.
+        """
+    )
+    parser.add_argument(
+        '-p', '--port', type=int, default=7777, help="""
+        Порт на котором будет работать сервер и ожидать подключения от клиентов"""
+    )
+    parser.add_argument(
+        '-a', '--addr', default='127.0.0.1', help="""
+        IP-адрес на котором будет работать сервер.
+        """
+    )
+    return parser
+
+
+if __name__ == '__main__':
+    parser = create_parser()
+    namespace = parser.parse_args(sys.argv[1:])
+    addr = namespace.addr
+    port = namespace.port
+    server = Server(addr, port)
+    server.start()
