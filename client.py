@@ -9,16 +9,33 @@ MAX_DATA_RECEIVE = 1024
 
 class Client:
 
-    def __init__(self, addr, port):
+    def __init__(self):
         self.account_name = input("Введите имя пользователя:")
+        self.sock = None
+
+    def connect_to_server(self, addr, port):
         try:
             self.sock = socket(AF_INET, SOCK_STREAM)
             self.sock.connect((addr, port))
+            print("Клиент <{}> успешно подключился к серверу".format(
+                self.account_name)
+            )
         except OSError as socket_connect_error:
             print("Ошибка подключения к серверу: {}".format(
                 socket_connect_error)
             )
             sys.exit(1)
+
+    def disconnect_server(self):
+        try:
+            self.sock.close()
+            print("Клиент <{}> отсоединен от сервера".format(
+                self.account_name)
+            )
+        except OSError as disconnect_server_error:
+            print("Ошибка отключения от сервера {}".format(
+                disconnect_server_error)
+            )
 
     def send_presence_msg(self):
         presence_msg = {
@@ -33,6 +50,9 @@ class Client:
         serialized_presence_msg = json.dumps(presence_msg).encode("utf-8")
         try:
             self.sock.send(serialized_presence_msg)
+            print("Клиент <{}> отправил 'presence' сообщение серверу".format(
+                self.account_name)
+            )
         except OSError as socket_send_msg_error:
             print("Ошибка отправки сообщения на сервер: {}".format(
                 socket_send_msg_error)
@@ -49,13 +69,13 @@ class Client:
         self.parse_data_from_server(unserialized_data)
 
     def parse_data_from_server(self, unserialized_data):
-        if unserialized_data['response'] == 200:
-            print("Клиент <{}> успешно подключился к серверу, статус: {}".format(
-                self.account_name, unserialized_data['alert']
+        if unserialized_data.get('response') == 200:
+            print("Клиент <{}> получил ответ от сервера, статус: {}".format(
+                self.account_name, unserialized_data.get('alert')
             ))
-        elif unserialized_data['response'] == 400:
+        elif unserialized_data.get('response') == 400:
             print("Не удачный запрос к серверу ошибка: {}. Повторите запрос.".format(
-                unserialized_data['error']
+                unserialized_data.get('error')
             ))
 
 
@@ -88,6 +108,8 @@ if __name__ == '__main__':
     namespace = parser.parse_args(sys.argv[1:])
     addr = namespace.addr
     port = namespace.port
-    client = Client(addr, port)
+    client = Client()
+    client.connect_to_server(addr, port)
     client.send_presence_msg()
     client.receive_response_from_server()
+    client.disconnect_server()

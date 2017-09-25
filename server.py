@@ -25,14 +25,17 @@ class Server:
             data = client.recv(MAX_DATA_RECEIVE)
             self.parse_data_from_clietn(client, addr, data)
 
+    def stop(self):
+        self.sock.close()
+
     def parse_data_from_clietn(self, client, addr, data):
         try:
             unserialized_data = json.loads(data.decode("utf-8"))
-            account_name = unserialized_data['user']['account_name']
-            if unserialized_data['action'].startswith('presence'):
+            account_name = unserialized_data.get('user').get('account_name')
+            if unserialized_data.get('action').startswith('presence'):
 
                 print("Клиент {} подключился к серверу с IP: {} <{}>".format(
-                    account_name, addr[0], unserialized_data['time'])
+                    account_name, addr[0], unserialized_data.get('time'))
                 )
                 self.send_good_response_to_client(client, 200, account_name)
             else:

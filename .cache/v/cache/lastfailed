@@ -1,0 +1,6 @@
+{
+  "tests/test_server.py::TestClient::()::test_connect_to_server": true,
+  "tests/test_server.py::TestServer::()::test_start_server": true,
+  "tests/test_server.py::test_receive_response_from_server": true,
+  "tests/test_server.py::test_send_presence_msg": true
+}
