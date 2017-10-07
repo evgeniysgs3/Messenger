@@ -24,6 +24,7 @@ def test_send_presence_msg():
     assert c.send_presence_msg()
 
 
+# здесь у меня тест не проходит, не понимаю по какой причине пока что((
 def test_receive_response_from_server():
     c = client.Client()
     c.connect_to_server('127.0.0.1', 7777)

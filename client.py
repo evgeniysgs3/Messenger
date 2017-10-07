@@ -2,6 +2,7 @@ import json
 import sys
 import argparse
 import time
+from errors import UsernameToLongError, MandatoryKeyError
 from socket import *
 
 MAX_DATA_RECEIVE = 1024
@@ -12,6 +13,17 @@ class Client:
     def __init__(self):
         self.account_name = input("Введите имя пользователя:")
         self.sock = None
+
+    @property
+    def account_name(self):
+        """Имя клиента"""
+        return self.__account_name
+
+    @account_name.setter
+    def account_name(self, account_name):
+        if len(account_name) > 26:
+            raise UsernameToLongError(account_name)
+        self.__account_name = account_name
 
     def connect_to_server(self, addr, port):
         try:
@@ -69,7 +81,9 @@ class Client:
         self.parse_data_from_server(unserialized_data)
 
     def parse_data_from_server(self, unserialized_data):
-        if unserialized_data.get('response') == 200:
+        if 'response' not in unserialized_data:
+            raise MandatoryKeyError('response')
+        elif unserialized_data.get('response') == 200:
             print("Клиент <{}> получил ответ от сервера, статус: {}".format(
                 self.account_name, unserialized_data.get('alert')
             ))

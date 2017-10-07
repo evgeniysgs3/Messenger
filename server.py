@@ -2,6 +2,7 @@ import json
 import sys
 import time
 import argparse
+from errors import BadRequestFromClientError
 from socket import *
 
 MAX_DATA_RECEIVE = 1024
@@ -37,15 +38,14 @@ class Server:
                 print("Клиент {} подключился к серверу с IP: {} <{}>".format(
                     account_name, addr[0], unserialized_data.get('time'))
                 )
-                self.send_good_response_to_client(client, 200, account_name)
+                Server.send_good_response_to_client(client, 200, account_name)
             else:
-                raise Exception("Ошибка при чтении данных от клиента {}".format(
-                    account_name))
-        except Exception as err:
-            self.send_bad_response_to_client(client, 400, account_name)
-            print("Отпраляем клиенту сведения об ошибке сервера. {}".format(err))
+                raise BadRequestFromClientError(account_name)
+        except BadRequestFromClientError:
+            Server.send_bad_response_to_client(client, 400, account_name)
 
-    def send_good_response_to_client(self, client, code, account_name):
+    @staticmethod
+    def send_good_response_to_client(client, code, account_name):
         response_msg = {
             "response": code,
             "time": int(time.time()),
@@ -57,7 +57,8 @@ class Server:
         except OSError as err:
             print("Ошибка отправки сообщения клиенту {}: {}".format(account_name, err))
 
-    def send_bad_response_to_client(self, client, code, account_name):
+    @staticmethod
+    def send_bad_response_to_client(client, code, account_name):
         response_msg = {
             "response": code,
             "time": int(time.time()),
