@@ -2,6 +2,8 @@ import json
 import sys
 import time
 import argparse
+import select
+import queue
 from errors import BadRequestFromClientError
 from socket import *
 
@@ -16,15 +18,61 @@ class Server:
             self.sock = socket(AF_INET, SOCK_STREAM)
             self.sock.bind((addr, port))
             self.sock.listen(MAX_CLIENT_CONNECTION)
+            self.sock.settimeout(1)
+            self.clients = []
+            self.message_queues = {}        # Очередь исходящих сообщений
         except OSError as start_server_error:
             print("Ошибка при запуске сервера: {}".format(start_server_error))
             sys.exit(1)
 
     def start(self):
+
         while True:
-            client, addr = self.sock.accept()
-            data = client.recv(MAX_DATA_RECEIVE)
-            self.parse_data_from_clietn(client, addr, data)
+            try:
+                conn, addr = self.sock.accept()
+            except OSError as err:
+                pass
+            else:
+                print("Получен запрос на соединение от {}".format(str(addr)))
+                self.clients.append(conn)
+            finally:
+                wait = 0
+                r = []
+                w = []
+                try:
+                    r, w, e = select.select(self.clients, self.clients, [], wait)
+                except:
+                    pass
+                print('{} \n {} \n'.format(r, w))
+                requests = self.read_requests(r, self.clients)
+                print(requests)
+                self.write_responses(requests, w, self.clients)
+
+    def read_requests(self, r_clients, all_clients):
+        """Чтение запросов из списка клиентов"""
+        responses = {}
+        for sock in r_clients:
+            try:
+                data = sock.recv(1024).decode('utf-8')
+                responses[sock] = data
+            except:
+                print('Клиент {} {} отключился'.format(sock.fileno(), sock.getpeername()))
+                all_clients.remove(sock)
+            return responses
+
+    def write_responses(self, requests, w_clients, all_clients):
+        """Эхо-ответ сервера клиентам, от которых были запросы"""
+
+        for sock in w_clients:
+            if sock in requests:
+                try:
+                    # Подготовить и отправить ответ сервера
+                    resp = requests[sock].encode('utf-8')
+                    # Эхо-ответ сделаем чуть непохожим на оригинал
+                    test_len = sock.send(resp.upper())
+                except:
+                    print('Клиент {} {} отключился'.format(sock.fileno(), sock.getpeername()))
+                    all_clients.remove(sock)
 
     def stop(self):
         self.sock.close()
@@ -39,13 +87,14 @@ class Server:
                     account_name, addr[0], unserialized_data.get('time'))
                 )
                 Server.send_good_response_to_client(client, 200, account_name)
+            elif unserialized_data.get('action').startswith('msg'):
+                print(unserialized_data)
             else:
                 raise BadRequestFromClientError(account_name)
         except BadRequestFromClientError:
-            Server.send_bad_response_to_client(client, 400, account_name)
+            self.send_bad_response_to_client(client, 400, account_name)
 
-    @staticmethod
-    def send_good_response_to_client(client, code, account_name):
+    def send_good_response_to_client(self, client, code, account_name):
         response_msg = {
             "response": code,
             "time": int(time.time()),
@@ -57,8 +106,7 @@ class Server:
         except OSError as err:
             print("Ошибка отправки сообщения клиенту {}: {}".format(account_name, err))
 
-    @staticmethod
-    def send_bad_response_to_client(client, code, account_name):
+    def send_bad_response_to_client(self, client, code, account_name):
         response_msg = {
             "response": code,
             "time": int(time.time()),
