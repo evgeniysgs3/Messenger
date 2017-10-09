@@ -73,6 +73,8 @@ class Client:
     def get_msg_from_chat(self):
         data = self.sock.recv(1024)
         print("Data from chat {}".format(data))
+        if not data:
+            self.sock.close()
 
     def send_msg(self, msg):
         if len(msg) > 501:
@@ -157,12 +159,13 @@ if __name__ == '__main__':
     if namespace.r:
         print("Клиент <{}> запущен в режиме чтения чата".format(client.account_name))
         while True:
-            client.send_presence_msg()
+            #client.send_presence_msg()
             client.get_msg_from_chat()
     elif namespace.w:
         while True:
             msg = input("Введите групповое сообщение:")
             client.send_msg(msg)
+            client.get_msg_from_chat()
     else:
         while True:
             client.receive_response_from_server()
