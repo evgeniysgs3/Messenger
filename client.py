@@ -2,8 +2,13 @@ import json
 import sys
 import argparse
 import time
-from errors import UsernameToLongError, MandatoryKeyError, MaxMsgLengthExceedError
 from socket import *
+from jimprotocol import JIMProtocol
+from errors import \
+    UsernameToLongError, MandatoryKeyError,\
+    MaxMsgLengthExceedError, ServerAvailabilityError,\
+    NoRequiredParameterActionError
+
 
 MAX_DATA_RECEIVE = 1024
 
@@ -11,19 +16,20 @@ MAX_DATA_RECEIVE = 1024
 class Client:
 
     def __init__(self):
-        self.account_name = input("Введите имя пользователя:")
+        self._account_name = "TestReader"
         self.sock = None
+        self.protocol = JIMProtocol(self._account_name)
 
     @property
     def account_name(self):
         """Имя клиента"""
-        return self.__account_name
+        return self._account_name
 
     @account_name.setter
-    def account_name(self, account_name):
-        if len(account_name) > 26:
-            raise UsernameToLongError(account_name)
-        self.__account_name = account_name
+    def account_name(self, account_name_value):
+        if len(account_name_value) > 26:
+            raise UsernameToLongError(account_name_value)
+        self._account_name = account_name_value
 
     def connect_to_server(self, addr, port):
         try:
@@ -32,13 +38,14 @@ class Client:
             print("Клиент <{}> успешно подключился к серверу".format(
                 self.account_name)
             )
-        except OSError as socket_connect_error:
-            print("Ошибка подключения к серверу: {}".format(
-                socket_connect_error)
-            )
-            sys.exit(1)
+            return self.sock
+        except OSError:
+            raise ServerAvailabilityError(addr, port)
+        except ServerAvailabilityError:
+            return -1
 
     def disconnect_server(self):
+        """Послать quit_msg"""
         try:
             self.sock.close()
             print("Клиент <{}> отсоединен от сервера".format(
@@ -50,53 +57,35 @@ class Client:
             )
 
     def send_presence_msg(self):
-        presence_msg = {
-                "action": "presence",
-                "time": int(time.time()),
-                "type": "status",
-                "user": {
-                    "account_name": self.account_name,
-                    "status": "Yep, I am here!"
-                }
-            }
-        serialized_presence_msg = json.dumps(presence_msg).encode("utf-8")
         try:
-            self.sock.send(serialized_presence_msg)
+            self.sock.send(self.protocol.presence_msg())
             print("Клиент <{}> отправил 'presence' сообщение серверу".format(
                 self.account_name)
             )
+            return 0
         except OSError as socket_send_msg_error:
             print("Ошибка отправки сообщения на сервер: {}".format(
                 socket_send_msg_error)
             )
+        except NoRequiredParameterActionError:
+            return -1
 
     def get_msg_from_chat(self):
         data = self.sock.recv(1024)
-        print("Data from chat {}".format(data))
-        if not data:
-            self.sock.close()
+        print("Data from chat {}".format(data.decode("utf-8")))
 
-    def send_msg(self, msg):
-        if len(msg) > 501:
-            raise MaxMsgLengthExceedError(self.account_name)
-        msg_protocol = {
-                "action": "msg",
-                "time": int(time.time()),
-                "to": "#chat_room",
-                "from": self.account_name,
-                "encoding": "utf-8",
-                "message": msg
-            }
-        serialized_msg = json.dumps(msg_protocol).encode("utf-8")
+    def send_chat_msg(self, chat_msg, chat_name):
         try:
-            self.sock.send(serialized_msg)
+            if len(chat_msg) > 501:
+                raise MaxMsgLengthExceedError(self.account_name)
+            self.sock.send(self.protocol.chat_msg(chat_msg, chat_name))
             print("Клиент <{}> отправил 'msg' сообщение серверу".format(
                 self.account_name)
             )
-        except OSError as socket_send_msg_error:
-            print("Ошибка отправки сообщения на сервер: {}".format(
-                socket_send_msg_error)
-            )
+        except MaxMsgLengthExceedError:
+            return -1
+        except NoRequiredParameterActionError:
+            return -1
 
     def receive_response_from_server(self):
         try:
@@ -155,17 +144,16 @@ if __name__ == '__main__':
     addr = namespace.addr
     port = namespace.port
     client = Client()
-    client.connect_to_server(addr, port)
+    c = client.connect_to_server(addr, port)
     if namespace.r:
         print("Клиент <{}> запущен в режиме чтения чата".format(client.account_name))
         while True:
-            #client.send_presence_msg()
-            client.get_msg_from_chat()
+            message = c.recv(1024)
+            print(message.decode('utf-8'))
     elif namespace.w:
         while True:
-            msg = input("Введите групповое сообщение:")
-            client.send_msg(msg)
-            client.get_msg_from_chat()
+            msg = input("Введите групповое сообщение:>")
+            c.send(msg.encode("utf-8"))
     else:
         while True:
             client.receive_response_from_server()

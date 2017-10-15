@@ -9,7 +9,7 @@ from errors import BadRequestFromClientError
 from socket import *
 
 MAX_DATA_RECEIVE = 1024
-MAX_CLIENT_CONNECTION = 10
+MAX_CLIENT_CONNECTION = 20
 
 
 class Server:
@@ -19,93 +19,52 @@ class Server:
             self.sock = socket(AF_INET, SOCK_STREAM)
             self.sock.bind((addr, port))
             self.sock.listen(MAX_CLIENT_CONNECTION)
-            #self.sock.settimeout(1)
-            self.message_queues = {}        # Очередь исходящих сообщений
+            self.sock.settimeout(0.2)
         except OSError as start_server_error:
             print("Ошибка при запуске сервера: {}".format(start_server_error))
             sys.exit(1)
 
     def start(self):
-        mainsocks, readsocks, writesocks = [], [], []
-        mainsocks.append(self.sock)
-        readsocks.append(self.sock)
-        writesocks.append(self.sock)
+        clients = []
         while True:
-            readables, writeables, exceptions = select.select(readsocks, writesocks, [])
-            for sockobj in readables:
-                if sockobj in mainsocks:
-                    newsock, address = sockobj.accept()
-                    print("Connect:", address, id(newsock))
-                    readsocks.append(newsock)
-                    self.message_queues[newsock] = queue.Queue()
-                else:
-                    data = sockobj.recv(1024)
-                    print('\tgot', data, 'on', id(sockobj))
-                    if not data:
-                        if sockobj in writesocks:
-                            writesocks.remove(sockobj)
-                        readsocks.remove(sockobj)
-                        sockobj.close()
-                        del self.message_queues[sockobj]
-                    else:
-                        self.message_queues[sockobj].put(data)
-                        print(self.message_queues)
-                        if sockobj not in writesocks:
-                            writesocks.append(sockobj)
-                        #reply = 'Echo=>%s at %s' % (data, time.time())
-                        #sockobj.send(reply.encode('utf-8'))
-            print('-'*10)
-            print(writesocks)
-            for sockobj in writeables:
-                try:
-                    next_msg = self.message_queues[sockobj].get_nowait()
-                except queue.Empty:
-                    writesocks.remove(sockobj)
-                else:
-                    sockobj.send(next_msg)
-
-    def read_requests(self, inputs, all_clients):
-        """Чтение запросов из списка клиентов"""
-        responses = {}
-        for sock in inputs:
             try:
-                if sock in inputs:
-                    newsock, addr = sock.accept()
-                    inputs.append(newsock)
-                else:
-                    data = sock.recv(1024).decode('utf-8')
-                    responses[sock] = data
+                conn, addr = self.sock.accept()
+            except OSError as e:
+                pass
+            else:
+                clients.append(conn)
+            finally:
+                r = []
+                w = []
+                try:
+                    r, w, e = select.select(clients, clients, [], 0)
+                except:
+                    pass
+                request_msg = self.read_requests(r, clients)
+                self.write_responses(request_msg, w, clients)
+
+    def read_requests(self, r_clients, all_clients):
+        """Чтение запросов из списка клиентов"""
+        messages = []
+        for sock in r_clients:
+            try:
+                data = sock.recv(1024).decode('utf-8')
+                messages.append(data)
             except:
-                print('Клиент {} {} отключился'.format(sock.fileno(), sock.getpeername()))
+                print('Клиент {} {} отключился'.format(sock.fileno()), sock.getpeername())
                 all_clients.remove(sock)
-            return responses
+        return messages
 
-    def write_responses(self, queue_msg, w, all_clients):
+    def write_responses(self, messages, w_clients, all_clients):
         """Эхо-ответ сервера клиентам, от которых были запросы"""
 
         for sock in w_clients:
-            if sock in requests:
+            for message in messages:
                 try:
-                    # Подготовить и отправить ответ сервера
-                    resp = requests[sock].encode('utf-8')
-                    # Эхо-ответ сделаем чуть непохожим на оригинал
-                    test_len = sock.send(resp.upper())
+                    sock.send(str(message).encode("utf-8"))
                 except:
-                    print('Клиент {} {} отключился'.format(sock.fileno(), sock.getpeername()))
-                    all_clients.remove(sock)
-
-    def write_responses_s(self, requests, w_clients, all_clients):
-        """Эхо-ответ сервера клиентам, от которых были запросы"""
-
-        for sock in w_clients:
-            if sock in requests:
-                try:
-                    # Подготовить и отправить ответ сервера
-                    resp = requests[sock].encode('utf-8')
-                    # Эхо-ответ сделаем чуть непохожим на оригинал
-                    test_len = sock.send(resp.upper())
-                except:
-                    print('Клиент {} {} отключился'.format(sock.fileno(), sock.getpeername()))
+                    print('Клиент {} {} отключился'.format(sock.fileno()), sock.getpeername())
+                    sock.close()
                     all_clients.remove(sock)
 
     def stop(self):
