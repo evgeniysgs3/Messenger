@@ -1,6 +1,6 @@
 import time
 import json
-from errors import NoRequiredParameterActionError
+from errors import NoRequiredParameterActionError, MaxMsgLengthExceedError
 
 
 def serialize_data(func):
@@ -9,12 +9,14 @@ def serialize_data(func):
         data = func(*args, **kwargs)
         if data.get("action") is None:
             raise NoRequiredParameterActionError
+        elif len(data) > 501:
+            raise MaxMsgLengthExceedError(args[0].user_name)
         ser_data = json.dumps(data).encode("utf-8")
         return ser_data
     return decorated
 
 
-class JIMProtocol:
+class JIMProtocolClient:
     def __init__(self, user_name):
         self.user_name = user_name
 
@@ -26,7 +28,7 @@ class JIMProtocol:
             "type": "status",
             "user": {
                 "account_name": self.user_name,
-                "status": "Online"
+                "status": "online"
             }
         }
         return presence_msg
@@ -79,3 +81,11 @@ class JIMProtocol:
             "room": str("#" + chat_name)
         }
         return leave_chat_msg
+
+
+class JIMProtocolServer:
+    def __init__(self):
+        pass
+
+    def send_response(self):
+        pass

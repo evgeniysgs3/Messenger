@@ -1,15 +1,24 @@
 import json
 import sys
+import os
 import time
 import argparse
 import select
-from multiprocessing import Queue
-import queue
+import logging
+from decorators import Log
+from log_config import setup_logger
+from constants import LOG_DIR
 from errors import BadRequestFromClientError
 from socket import *
 
 MAX_DATA_RECEIVE = 1024
 MAX_CLIENT_CONNECTION = 20
+
+# Log сервера
+setup_logger('server', os.path.join(LOG_DIR, 'server.log'))
+server_log = logging.getLogger('server')
+# Создание класса декоратора для логирования функций
+log = Log(server_log)
 
 
 class Server:
@@ -24,11 +33,15 @@ class Server:
             print("Ошибка при запуске сервера: {}".format(start_server_error))
             sys.exit(1)
 
+    @log
     def start(self):
         clients = []
         while True:
             try:
                 conn, addr = self.sock.accept()
+                data = conn.recv(1024)
+                print(data)
+                self.parse_data_from_clietn(conn, addr, data)
             except OSError as e:
                 pass
             else:
@@ -42,7 +55,7 @@ class Server:
                     pass
                 request_msg = self.read_requests(r, clients)
                 self.write_responses(request_msg, w, clients)
-
+    @log
     def read_requests(self, r_clients, all_clients):
         """Чтение запросов из списка клиентов"""
         messages = []
@@ -55,6 +68,7 @@ class Server:
                 all_clients.remove(sock)
         return messages
 
+    @log
     def write_responses(self, messages, w_clients, all_clients):
         """Эхо-ответ сервера клиентам, от которых были запросы"""
 
@@ -66,10 +80,11 @@ class Server:
                     print('Клиент {} {} отключился'.format(sock.fileno()), sock.getpeername())
                     sock.close()
                     all_clients.remove(sock)
-
+    @log
     def stop(self):
         self.sock.close()
 
+    @log
     def parse_data_from_clietn(self, client, addr, data):
         try:
             unserialized_data = json.loads(data.decode("utf-8"))
@@ -79,14 +94,17 @@ class Server:
                 print("Клиент {} подключился к серверу с IP: {} <{}>".format(
                     account_name, addr[0], unserialized_data.get('time'))
                 )
-                Server.send_good_response_to_client(client, 200, account_name)
+                self.send_good_response_to_client(client, 200, account_name)
             elif unserialized_data.get('action').startswith('msg'):
                 print(unserialized_data)
+            elif unserialized_data.get('action').startwith('quit'):
+                client.close()
             else:
                 raise BadRequestFromClientError(account_name)
         except BadRequestFromClientError:
             self.send_bad_response_to_client(client, 400, account_name)
 
+    @log
     def send_good_response_to_client(self, client, code, account_name):
         response_msg = {
             "response": code,
@@ -99,6 +117,7 @@ class Server:
         except OSError as err:
             print("Ошибка отправки сообщения клиенту {}: {}".format(account_name, err))
 
+    @log
     def send_bad_response_to_client(self, client, code, account_name):
         response_msg = {
             "response": code,
