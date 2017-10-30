@@ -1,10 +1,10 @@
-import time
 import json
-from errors import NoRequiredParameterActionError, MaxMsgLengthExceedError
+import time
+
+from protocols.jim.error.error import NoRequiredParameterActionError, MaxMsgLengthExceedError
 
 
 def serialize_data(func):
-
     def decorated(*args, **kwargs):
         data = func(*args, **kwargs)
         if data.get("action") is None:
