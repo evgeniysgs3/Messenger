@@ -15,6 +15,15 @@ def serialize_data(func):
         return ser_data
     return decorated
 
+def serialize_data_server(func):
+    def decorated(*args, **kwargs):
+        data = func(*args, **kwargs)
+        if len(data) > 501:
+            raise MaxMsgLengthExceedError(args[0].user_name)
+        ser_data = json.dumps(data).encode("utf-8")
+        return ser_data
+    return decorated
+
 
 class JIMProtocolClient:
     def __init__(self, user_name):
@@ -32,6 +41,25 @@ class JIMProtocolClient:
             }
         }
         return presence_msg
+
+    @serialize_data
+    def add_contact_msg(self, user_name, contact_name):
+        add_contact_msg = {
+            "action": "add_contact",
+            "user_name": user_name,
+            "contact_name": contact_name,
+            "time": int(time.time())
+        }
+        return add_contact_msg
+
+    @serialize_data
+    def get_contact_msg(self):
+        get_contact_msg = {
+            "action": "get_contact",
+            "user": self.user_name,
+            "time": int(time.time())
+        }
+        return get_contact_msg
 
     @serialize_data
     def chat_msg(self, msg, chat_name):
@@ -84,8 +112,35 @@ class JIMProtocolClient:
 
 
 class JIMProtocolServer:
+
     def __init__(self):
         pass
 
-    def send_response(self):
-        pass
+    @serialize_data_server
+    def good_resp(self):
+        good_resp = {
+            "response": 200,
+            "time": int(time.time()),
+            "alert": "OK"
+        }
+        return good_resp
+
+    # Выбрал такую струтуру ответа,
+    # так как в ответе сервера должено быть обязательное поле response
+    @serialize_data_server
+    def count_contacts_resp(self, count_contacts, contact_list):
+        count_contact = {
+            "response": 202,
+            "quantity": count_contacts,
+            "contacts": contact_list
+        }
+        return count_contact
+
+    @serialize_data_server
+    def bad_resp(self, code, account_name):
+        bad_resp_msg = {
+            "response": code,
+            "time": int(time.time()),
+            "error": "Bad request"
+        }
+        return bad_resp_msg

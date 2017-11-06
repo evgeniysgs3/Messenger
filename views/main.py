@@ -1,6 +1,6 @@
 import sys
 from PyQt5 import QtGui, QtWidgets
-from client import client
+from views.client import client
 
 
 class Messenger(QtWidgets.QMainWindow):

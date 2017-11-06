@@ -8,9 +8,11 @@ import time
 from socket import *
 
 from config.constants import LOG_DIR
-from server.error.error import BadRequestFromClientError
+from server.errors import BadRequestFromClientError
 from log.decorators import Log
 from log.log_config import setup_logger
+from server.repository.storage import ServerStorage
+from protocols.jim.jimprotocol import JIMProtocolServer
 
 MAX_DATA_RECEIVE = 1024
 MAX_CLIENT_CONNECTION = 20
@@ -30,6 +32,10 @@ class Server:
             self.sock.bind((addr, port))
             self.sock.listen(MAX_CLIENT_CONNECTION)
             self.sock.settimeout(0.2)
+            # Storage for server
+            self.storage = ServerStorage('ServerStorage')
+            # Using protocol
+            self.protocol = JIMProtocolServer()
         except OSError as start_server_error:
             print("Ошибка при запуске сервера: {}".format(start_server_error))
             sys.exit(1)
@@ -65,6 +71,8 @@ class Server:
                 data = sock.recv(1024).decode('utf-8')
                 messages.append(data)
             except:
+                # Почему то раняет сервер если клиент через ctrl + c отключился
+                # IndexError: tuple index out of range
                 print('Клиент {} {} отключился'.format(sock.fileno()), sock.getpeername())
                 all_clients.remove(sock)
         return messages
@@ -87,49 +95,40 @@ class Server:
 
     @log
     def parse_data_from_clietn(self, client, addr, data):
+        """Processing Custom Messages"""
         try:
             unserialized_data = json.loads(data.decode("utf-8"))
             account_name = unserialized_data.get('user').get('account_name')
+            # presence msg and add new client
             if unserialized_data.get('action').startswith('presence'):
-
-                print("Клиент {} подключился к серверу с IP: {} <{}>".format(
-                    account_name, addr[0], unserialized_data.get('time'))
-                )
-                self.send_good_response_to_client(client, 200, account_name)
+                self.storage.add_client(account_name)
+                self.storage.commit()
+                client.send(self.protocol.good_resp())
+            # add contact
+            elif unserialized_data.get('action').startswith('add_contact'):
+                user_name = unserialized_data.get('user_name')
+                contact_name = unserialized_data.get('contact_name')
+                self.storage.add_contact(user_name, contact_name)
+                # Как лучше обработать исключение если такой клиент существует в БД?
+                self.storage.commit()
+                client.send(self.protocol.good_resp())
+            # get contact from server storage
+            elif unserialized_data.get('action').startswith('get_contact'):
+                contact_list = self.storage.get_contact_list(account_name)
+                # send response to client
+                client.send(self.protocol.count_contacts_resp(len(contact_list)))
+                client.send(self.protocol.contact_resp(contact_list))
+            # print msg from client
             elif unserialized_data.get('action').startswith('msg'):
                 print(unserialized_data)
+            # don't work
+            # disconnect client
             elif unserialized_data.get('action').startwith('quit'):
                 client.close()
             else:
                 raise BadRequestFromClientError(account_name)
         except BadRequestFromClientError:
-            self.send_bad_response_to_client(client, 400, account_name)
-
-    @log
-    def send_good_response_to_client(self, client, code, account_name):
-        response_msg = {
-            "response": code,
-            "time": int(time.time()),
-            "alert": "OK"
-        }
-        serialized_response = json.dumps(response_msg).encode("utf-8")
-        try:
-            client.send(serialized_response)
-        except OSError as err:
-            print("Ошибка отправки сообщения клиенту {}: {}".format(account_name, err))
-
-    @log
-    def send_bad_response_to_client(self, client, code, account_name):
-        response_msg = {
-            "response": code,
-            "time": int(time.time()),
-            "error": "Bad request"
-        }
-        serialized_response = json.dumps(response_msg).encode("utf-8")
-        try:
-            client.send(serialized_response)
-        except OSError as err:
-            print("Ошибка при отправки сообщения клиенту {}: {}".format(account_name, err))
+            client.send(self.protocol.bad_resp(400, account_name))
 
 
 def create_parser():

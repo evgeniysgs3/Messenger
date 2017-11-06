@@ -1,7 +1,7 @@
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
-from models import ClientHistory, Client, ContactList, Base
-from errors import NoneClientError
+from server.repository.models import ClientHistory, Client, ContactList, Base
+from server.repository.errors import NoneClientError
 
 
 class ServerStorage:
@@ -44,22 +44,23 @@ class ServerStorage:
         else:
             raise NoneClientError(username)
 
-    def add_contact(self, client_username, contact_username):
-        client = self._get_client_by_username(client_username)
+    def add_contact(self, user_name, contact_name):
+        client = self._get_client_by_username(user_name)
         if client:
-            contact = self._get_client_by_username(contact_username)
+            contact = self._get_client_by_username(contact_name)
             if contact:
                 contact_list = ContactList(client_id=client.ClientId, contact_id=contact.ClientId)
                 self.session.add(contact_list)
             else:
-                raise NoneClientError(contact_username)
+                raise NoneClientError(contact_name)
         else:
-            raise NoneClientError(client_username)
+            raise NoneClientError(user_name)
 
     def get_contact_list(self, user_name):
         client = self._get_client_by_username(user_name)
         if client:
-            contact_list = self.session.query(ContactList.ContactId).filter(ContactList.ClientId == client.ClientId).all()
+            contact_list = self.session.query(ContactList.ContactId).filter(ContactList.ClientId == client.ClientId)
             return contact_list
         else:
             raise NoneClientError(user_name)
+        return contact_list

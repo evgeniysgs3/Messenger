@@ -2,6 +2,9 @@ import argparse
 import json
 import logging
 import sys
+# Костыль, который нужно убрать не понимаю почему когда из консоли стартую
+# main.py -w получаю ImportError client Not found
+sys.path.append('/home/leming/Documents/PycharmProject/Messenger')
 import os
 from socket import *
 from client.error.error import UsernameToLongError, MandatoryKeyError, ServerAvailabilityError
@@ -79,6 +82,9 @@ class Client:
             self.account_name)
         )
 
+    def add_contact(self, contact_name):
+        self.sock.send(self.protocol.add_contact_msg(self._account_name, contact_name))
+
     @log
     def receive_response_from_server(self):
         try:
@@ -98,6 +104,9 @@ class Client:
             client_logger.info("Клиент <{}> получил ответ от сервера, статус: {}".format(
                 self.account_name, unserialized_data.get('alert')
             ))
+        elif unserialized_data.get('response') == 202:
+            print("В списке контактов содержится: %s записей\n" % unserialized_data.get('quantity'))
+            print("Список контактов %s" % unserialized_data.get('contacts'))
         elif unserialized_data.get('response') == 400:
             print("Не удачный запрос к серверу ошибка: {}. Повторите запрос.".format(
                 unserialized_data.get('error')
@@ -147,10 +156,13 @@ if __name__ == '__main__':
             client.get_msg_from_chat()
     elif namespace.w:
         while True:
-            msg = input("Введите групповое сообщение:> / Выйти (q)")
+            msg = input("""1. Добавить контакт (add name);\n2. Получить списко контактов (get);\n3. Выйти(q);\nВведите групповое сообщение или команду:> """)
             if msg == 'q':
                 # Не работает, сразу вешает сервак, видимо из-за subprocess
                 client.disconnect_server()
+            elif msg.startswith('add'):
+                contact_name = msg.split()[1]
+                client.add_contact(contact_name)
             else:
                 client.send_chat_msg(msg, 'room')
     else:
