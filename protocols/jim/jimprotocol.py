@@ -53,20 +53,20 @@ class JIMProtocolClient:
         return add_contact_msg
 
     @serialize_data
-    def get_contact_msg(self):
+    def get_contact_msg(self, user_name):
         get_contact_msg = {
             "action": "get_contact",
-            "user": self.user_name,
+            "user": user_name,
             "time": int(time.time())
         }
         return get_contact_msg
 
     @serialize_data
-    def chat_msg(self, msg, chat_name):
+    def contact_msg(self, msg, contact_name):
         msg_protocol = {
             "action": "msg",
             "time": int(time.time()),
-            "to": str("#" + chat_name),
+            "to": str(contact_name),
             "from": str(self.user_name),
             "encoding": "utf-8",
             "message": msg
@@ -137,7 +137,7 @@ class JIMProtocolServer:
         return count_contact
 
     @serialize_data_server
-    def bad_resp(self, code, account_name):
+    def bad_resp(self, code):
         bad_resp_msg = {
             "response": code,
             "time": int(time.time()),

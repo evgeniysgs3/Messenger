@@ -76,14 +76,14 @@ class Client:
         print("Data from chat {}".format(data.decode("utf-8")))
 
     @log
-    def send_chat_msg(self, chat_msg, chat_name):
-        self.sock.send(self.protocol.chat_msg(chat_msg, chat_name))
-        client_logger.info("Клиент <{}> отправил 'msg' сообщение серверу".format(
-            self.account_name)
-        )
+    def send_contact_msg(self, chat_msg, contact_name):
+        self.sock.send(self.protocol.contact_msg(chat_msg, contact_name))
 
     def add_contact(self, contact_name):
         self.sock.send(self.protocol.add_contact_msg(self._account_name, contact_name))
+
+    def get_contact_list(self):
+        self.sock.send(self.protocol.get_contact_msg(self._account_name))
 
     @log
     def receive_response_from_server(self):
@@ -156,15 +156,19 @@ if __name__ == '__main__':
             client.get_msg_from_chat()
     elif namespace.w:
         while True:
-            msg = input("""1. Добавить контакт (add name);\n2. Получить списко контактов (get);\n3. Выйти(q);\nВведите групповое сообщение или команду:> """)
+            msg = input("""1. Добавить контакт (add name);\n2. Получить списко контактов (get);\n3. Выйти(q);\nВведите сообщение (contact_name msg):> """)
             if msg == 'q':
                 # Не работает, сразу вешает сервак, видимо из-за subprocess
                 client.disconnect_server()
             elif msg.startswith('add'):
                 contact_name = msg.split()[1]
                 client.add_contact(contact_name)
+            elif msg.startswith('get'):
+                client.get_contact_list()
+                data = client.sock.recv(1024)
+                print(data)
             else:
-                client.send_chat_msg(msg, 'room')
+                client.send_contact_msg(' '.join(msg.split()[1:]), msg.split()[0])
     else:
         while True:
             client.receive_response_from_server()
