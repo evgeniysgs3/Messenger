@@ -1,7 +1,10 @@
 import argparse
 import json
 import logging
+from time import sleep
 import sys
+import threading
+from queue import Queue
 # Костыль, который нужно убрать не понимаю почему когда из консоли стартую
 # main.py -w получаю ImportError client Not found
 sys.path.append('/home/leming/Documents/PycharmProject/Messenger')
@@ -11,7 +14,7 @@ from client.error.error import UsernameToLongError, MandatoryKeyError, ServerAva
 from config.constants import LOG_DIR
 from log.decorators import Log
 from log.log_config import setup_logger
-from protocols.jim.jimprotocol import JIMProtocolClient
+from protocols.jim.jimprotocol import JIMProtocolClient, JIMMsg
 
 MAX_DATA_RECEIVE = 1024
 
@@ -19,7 +22,41 @@ MAX_DATA_RECEIVE = 1024
 setup_logger('client', os.path.join(LOG_DIR, 'client.log'))
 client_logger = logging.getLogger('client')
 log = Log(client_logger)
+menu_for_console_client = """
+1. Добавить контакт (add name);
+2. Получить списко контактов (get);
+3. Ввод сообщения контакту (contact_name msg);
+4. Выйти(q);
+"""
 
+class Reciver:
+
+    def __init__(self, socket, queue_msg, client):
+        self.sock = socket
+        self.queue_in_messages = queue_msg
+        self.client = client
+
+    def __call__(self):
+        while True:
+            serialized_data = self.sock.recv(MAX_DATA_RECEIVE)
+            if serialized_data:
+                try:
+                    self.parse_data_from_server(serialized_data)
+                # Если это не ответ сервера, то выводим на экран
+                except MandatoryKeyError:
+                    data = json.loads(serialized_data.decode("utf-8"))
+                    print(JIMMsg(data))
+                    print(menu_for_console_client)
+            else:
+                break
+
+    @log
+    def parse_data_from_server(self, serialized_data):
+        data = json.loads(serialized_data.decode("utf-8"))
+        if 'response' not in data:
+            raise MandatoryKeyError('response')
+        else:
+            self.queue_in_messages.put(data)
 
 class Client:
 
@@ -27,6 +64,7 @@ class Client:
         self._account_name = input("Введите имя клиента:")
         self.sock = None
         self.protocol = JIMProtocolClient(self._account_name)
+        self.queue_in_messages = Queue()
 
     @property
     def account_name(self):
@@ -44,18 +82,17 @@ class Client:
         try:
             self.sock = socket(AF_INET, SOCK_STREAM)
             self.sock.connect((addr, port))
-            return self.sock
+            return 1
         except OSError:
             raise ServerAvailabilityError(addr, port)
         except ServerAvailabilityError:
-            return -1
+            return 0
 
     @log
     def disconnect_server(self):
         """Послать quit_msg"""
         try:
             self.sock.send(self.protocol.quit_msg())
-            self.sock.close()
         except OSError as disconnect_server_error:
             print("Ошибка отключения от сервера {}".format(
                 disconnect_server_error)
@@ -65,6 +102,9 @@ class Client:
     def send_presence_msg(self):
         try:
             self.sock.send(self.protocol.presence_msg())
+            response_srv = self.queue_in_messages.get()
+            if response_srv.get('response') == 200:
+                print("Мы успешно подключились к серверу.")
         except OSError as socket_send_msg_error:
             client_logger.warning("Ошибка отправки сообщения на сервер: {}".format(
                 socket_send_msg_error)
@@ -72,7 +112,7 @@ class Client:
 
     @log
     def get_msg_from_chat(self):
-        data = self.sock.recv(1024)
+        data = self.sock.recv(MAX_DATA_RECEIVE)
         print("Data from chat {}".format(data.decode("utf-8")))
 
     @log
@@ -81,36 +121,17 @@ class Client:
 
     def add_contact(self, contact_name):
         self.sock.send(self.protocol.add_contact_msg(self._account_name, contact_name))
+        response_server = self.queue_in_messages.get()
+        print(response_server)
+        if response_server.get('response') == 200:
+            print("Контакт {} успешно добавлен.".format(contact_name))
 
     def get_contact_list(self):
         self.sock.send(self.protocol.get_contact_msg(self._account_name))
-
-    @log
-    def receive_response_from_server(self):
-        try:
-            data = self.sock.recv(MAX_DATA_RECEIVE)
-        except OSError as socket_receive_msg_error:
-            client_logger.warning("Ошибка при получении ответа от сервера: {}".format(
-                socket_receive_msg_error)
-            )
-        unserialized_data = json.loads(data.decode("utf-8"))
-        self.parse_data_from_server(unserialized_data)
-
-    @log
-    def parse_data_from_server(self, unserialized_data):
-        if 'response' not in unserialized_data:
-            raise MandatoryKeyError('response')
-        elif unserialized_data.get('response') == 200:
-            client_logger.info("Клиент <{}> получил ответ от сервера, статус: {}".format(
-                self.account_name, unserialized_data.get('alert')
-            ))
-        elif unserialized_data.get('response') == 202:
-            print("В списке контактов содержится: %s записей\n" % unserialized_data.get('quantity'))
-            print("Список контактов %s" % unserialized_data.get('contacts'))
-        elif unserialized_data.get('response') == 400:
-            print("Не удачный запрос к серверу ошибка: {}. Повторите запрос.".format(
-                unserialized_data.get('error')
-            ))
+        data = self.queue_in_messages.get()
+        if data.get('response') == 202:
+            print("В списке контактов содержится: %s записей\n" % data.get('quantity'))
+            print("Список контактов %s" % data.get('contacts'))
 
 
 def create_parser():
@@ -146,30 +167,25 @@ if __name__ == '__main__':
     addr = namespace.addr
     port = namespace.port
     client = Client()
-    c = client.connect_to_server(addr, port)
+    if not client.connect_to_server(addr, port):
+        print("Сервер не доступен!")
+        sys.exit()
+    listener = Reciver(client.sock, client.queue_in_messages, client)
+    th_listen = threading.Thread(target=listener)
+    th_listen.daemon = True
+    th_listen.start()
+    # Посылаем приветственое сообщение серверу
     client.send_presence_msg()
-    data_from_server = c.recv(1024)
-    print(data_from_server)
-    if namespace.r:
-        print("Клиент <{}> запущен в режиме чтения чата".format(client.account_name))
-        while True:
-            client.get_msg_from_chat()
-    elif namespace.w:
-        while True:
-            msg = input("""1. Добавить контакт (add name);\n2. Получить списко контактов (get);\n3. Выйти(q);\nВведите сообщение (contact_name msg):> """)
-            if msg == 'q':
-                # Не работает, сразу вешает сервак, видимо из-за subprocess
-                client.disconnect_server()
-            elif msg.startswith('add'):
-                contact_name = msg.split()[1]
-                client.add_contact(contact_name)
-            elif msg.startswith('get'):
-                client.get_contact_list()
-                data = client.sock.recv(1024)
-                print(data)
-            else:
-                client.send_contact_msg(' '.join(msg.split()[1:]), msg.split()[0])
-    else:
-        while True:
-            client.receive_response_from_server()
-    client.disconnect_server()
+    while True:
+        print(menu_for_console_client)
+        msg = input(":>")
+        if msg == 'q':
+            # Не работает, сразу вешает сервак, видимо из-за subprocess
+            client.disconnect_server()
+        elif msg.startswith('add'):
+            contact_name = msg.split()[1]
+            client.add_contact(contact_name)
+        elif msg.startswith('get'):
+            client.get_contact_list()
+        else:
+            client.send_contact_msg(' '.join(msg.split()[1:]), msg.split()[0])

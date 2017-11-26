@@ -25,6 +25,14 @@ def serialize_data_server(func):
     return decorated
 
 
+class JIMMsg:
+    def __init__(self, msg):
+        self.msg = msg
+    def __str__(self):
+        return "NEW_MSG:<{}>:FROM:{}=>{}".format(
+            time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(self.msg.get('time'))),
+            self.msg.get('from'), self.msg.get('message'))
+
 class JIMProtocolClient:
     def __init__(self, user_name):
         self.user_name = user_name
@@ -76,7 +84,8 @@ class JIMProtocolClient:
     @serialize_data
     def quit_msg(self):
         disconnect_msg = {
-            "action": "quit"
+            "action": "quit",
+            "time": int(time.time())
         }
         return disconnect_msg
 

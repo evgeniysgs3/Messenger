@@ -72,7 +72,7 @@ class Server:
         messages = []
         for sock in r_clients:
             try:
-                data = sock.recv(1024)
+                data = sock.recv(MAX_DATA_RECEIVE)
                 # Добавляем в список сообщение и кто прислал
                 messages.append((data, sock))
             except:
@@ -130,15 +130,18 @@ class Server:
             elif unserialized_data.get('action').startswith('msg'):
                 to = unserialized_data.get('to')
                 to = self.named_socket.get(to)
-                to.send(data)
+                to.send(json.dumps(unserialized_data).encode("utf-8"))
 
             # don't work
             # disconnect client
             elif unserialized_data.get('action').startwith('quit'):
+                print("Клиент хочет отключиться!")
                 client.close()
             else:
                 raise BadRequestFromClientError("TestUsr")
         except BadRequestFromClientError:
+            client.send(self.protocol.bad_resp(400))
+        except AttributeError:
             client.send(self.protocol.bad_resp(400))
 
 
