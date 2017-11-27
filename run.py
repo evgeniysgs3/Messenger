@@ -2,8 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import sys
+
 from PyQt5.QtWidgets import QApplication
-from main import mainWindow
+
+from views.main_view import mainWindow
 
 
 def main():
