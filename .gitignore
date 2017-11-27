@@ -1,0 +1,9 @@
+*__
+__*
+*.output
+*.state
+*.log
+*.pyc
+*.tmp
+.idea/
+*~
