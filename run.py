@@ -9,6 +9,8 @@ from main import mainWindow
 def main():
     app = QApplication(sys.argv)
     main_window = mainWindow()
+    main_window.resize(400, 600)
+    main_window.setWindowTitle("BirdHouse_v1.0")
     sys.exit(app.exec_())
 
 

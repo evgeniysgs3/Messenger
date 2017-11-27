@@ -5,7 +5,8 @@ class TabChat(QTabWidget):
     """Класс главного окна чата,
      где находится список контактов"""
 
-    def __init__(self, contact_chat, contact_name):
+    def __init__(self, contact_chat):
         super().__init__()
 
-        self.addTab(contact_chat.frameSynthesis(), contact_name)
+    def my_addTab(self, contact_chat):
+        self.addTab(contact_chat.frameSynthesis(), contact_chat.name)

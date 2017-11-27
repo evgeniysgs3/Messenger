@@ -5,9 +5,13 @@ class ChatContact(QWidget):
     """Класс главного окна чата,
      где находится список контактов"""
 
-    def __init__(self):
+    def __init__(self, contact_name):
         super().__init__()
+        self.name = contact_name
         self.frameSynthesis()
+
+    def __repr__(self):
+        return "%s" % (self.contact_name)
 
     def __frame_history(self):
         self.l_history = QLabel("История переписки:")

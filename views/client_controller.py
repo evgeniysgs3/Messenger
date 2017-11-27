@@ -17,6 +17,10 @@ class ControllerMessanger(QWidget):
         # self.client = client
         self.view = view
 
+        self.tab_chat = None
+
+        self.list_chats = []
+
         self.connections()
 
     def connections(self):
@@ -30,5 +34,14 @@ class ControllerMessanger(QWidget):
     @pyqtSlot()
     def createChatDialog(self):
         """Создаем новое окно куда будут бобавляться все чаты"""
-        self.chat = TabChat(ChatContact(), "new_tab")
-        self.chat.show()
+        if self.tab_chat is None:
+            self.first_chat = ChatContact("new_tab")
+            self.tab_chat = TabChat(self.first_chat)
+            self.tab_chat.my_addTab(self.first_chat)
+            self.list_chats.append(self.first_chat.name)
+        else:
+            self.new_chat = ChatContact("new_tab2")
+            if self.new_chat.name not in self.list_chats:
+                self.list_chats.append(self.new_chat.name)
+                self.tab_chat.my_addTab(self.new_chat)
+        self.tab_chat.show()
