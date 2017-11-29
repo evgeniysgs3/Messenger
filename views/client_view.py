@@ -9,15 +9,18 @@ class Messanger(QWidget):
         super().__init__()
 
         self.list_contact_list = QListWidget()
+        self.btn_refresh_contacts = QPushButton("Обновить")
+
+
 
     def __frame_contact_list(self):
 
         # Здесь будет находиться список контактов
         self.l_contact_list = QLabel("Список контактов:")
-        self.btn_refresh_contacts = QPushButton("Обновить")
+
         self.list_contact_list
-        self.list_contact_list.addItem("test")
-        self.list_contact_list.addItem("tet2")
+        #self.list_contact_list.addItem("test")
+        #self.list_contact_list.addItem("tet2")
 
         self.vbox_contact_list = QVBoxLayout()
         self.vbox_contact_list.addWidget(self.l_contact_list)

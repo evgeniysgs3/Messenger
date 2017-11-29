@@ -60,8 +60,9 @@ class Reciver:
 
 class Client:
 
-    def __init__(self):
-        self._account_name = input("Введите имя клиента:")
+    def __init__(self, login):
+        #self._account_name = input("Введите имя клиента:")
+        self._account_name = login
         self.sock = None
         self.protocol = JIMProtocolClient(self._account_name)
         self.queue_in_messages = Queue()
@@ -132,6 +133,36 @@ class Client:
         if data.get('response') == 202:
             print("В списке контактов содержится: %s записей\n" % data.get('quantity'))
             print("Список контактов %s" % data.get('contacts'))
+
+    def get_contact_list_gui(self):
+        """Возвращает количество контактов и их список"""
+
+        self.sock.send(self.protocol.get_contact_msg(self._account_name))
+        data = self.queue_in_messages.get()
+        if data.get('response') == 202:
+            return data.get('quantity'), data.get('contacts')
+
+    def start_gui_client(self, addr, port):
+        if not self.connect_to_server(addr, port):
+            print("Сервер не доступен!")
+            sys.exit()
+        listener = Reciver(self.sock, self.queue_in_messages, self)
+        th_listen = threading.Thread(target=listener)
+        th_listen.daemon = True
+        th_listen.start()
+        # Посылаем приветственое сообщение серверу
+        self.send_presence_msg()
+        # while True:
+        #     if msg == 'q':
+        #         # Не работает, сразу вешает сервак, видимо из-за subprocess
+        #         self.disconnect_server()
+        #     elif msg.startswith('add'):
+        #         contact_name = msg.split()[1]
+        #         self.add_contact(contact_name)
+        #     elif msg.startswith('get'):
+        #         self.get_contact_list()
+        #     else:
+        #         self.send_contact_msg(' '.join(msg.split()[1:]), msg.split()[0])
 
 
 def create_parser():

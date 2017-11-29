@@ -1,4 +1,3 @@
-import sys
 from PyQt5.QtWidgets import QMainWindow, QWidget, QHBoxLayout
 from .client_view import Messanger
 from .client_controller import ControllerMessanger
@@ -11,7 +10,7 @@ class mainWindow(QMainWindow):
 
     """
 
-    def __init__(self):
+    def __init__(self, login):
         """Конструктор создает экземпляры всех необходимых для
         работы классов
         И вызывается метод отрисовки и заполнения главного окна
@@ -21,7 +20,7 @@ class mainWindow(QMainWindow):
         super().__init__()
 
         self.vMessenger = Messanger()
-        self.cMessanger = ControllerMessanger(self.vMessenger)
+        self.cMessanger = ControllerMessanger(self.vMessenger, login)
         self.init_UI()
 
     def init_UI(self):

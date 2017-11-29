@@ -1,3 +1,4 @@
+from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QListWidget, QScrollArea, QWidget, QLabel, QVBoxLayout, QFrame, QTextEdit, QPushButton, QHBoxLayout
 
@@ -9,6 +10,7 @@ class ChatContact(QWidget):
         super().__init__()
         self.name = contact_name
         self.frameSynthesis()
+        self.btn_send_msg.clicked.connect(self.send_msg)
 
     def __repr__(self):
         return "%s" % (self.contact_name)
@@ -58,3 +60,7 @@ class ChatContact(QWidget):
         self.frame_synthesis.setLayout(self.vbox_synthesis)
 
         return self.frame_synthesis
+
+    @pyqtSlot()
+    def send_msg(self):
+        print("msg_sended")
