@@ -1,6 +1,7 @@
 import pytest
 import server
-import client
+
+from src import client
 
 
 @pytest.fixture(scope='module')
