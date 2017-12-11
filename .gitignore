@@ -2,7 +2,6 @@
 __*
 *.output
 *.state
-*.log
 *.pyc
 *.tmp
 .idea/

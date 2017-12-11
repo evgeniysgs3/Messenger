@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ea769d7d-9518-4cc7-8284-9c3583efa9b0" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server.py" afterPath="$PROJECT_DIR$/server.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/views/login_view.py" afterPath="$PROJECT_DIR$/src/views/login_view.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/logs/tes" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -26,18 +27,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="add_contact_view.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/views/add_contact_view.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3">
-              <caret line="7" column="8" lean-forward="false" selection-start-line="7" selection-start-column="8" selection-end-line="7" selection-end-column="8" />
-              <folding>
-                <element signature="e#0#27#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="messanger_controller.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/views/messanger_controller.py">
           <provider selected="true" editor-type-id="text-editor">
@@ -50,7 +39,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="login_view.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="login_view.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/views/login_view.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="126">
@@ -58,6 +47,16 @@
               <folding>
                 <element signature="e#0#27#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="tes" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/logs/tes">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -156,7 +155,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/client.py" />
         <option value="$PROJECT_DIR$/server/server.py" />
         <option value="$PROJECT_DIR$/server/repository/storage.py" />
         <option value="$PROJECT_DIR$/server/new_parallel_server" />
@@ -207,6 +205,7 @@
         <option value="$PROJECT_DIR$/src/views/add_contact_controller.py" />
         <option value="$PROJECT_DIR$/server.py" />
         <option value="$PROJECT_DIR$/src/views/login_view.py" />
+        <option value="$PROJECT_DIR$/.gitignore" />
       </list>
     </option>
   </component>
@@ -413,9 +412,8 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="75" y="24" width="1301" height="744" extended-state="0" />
-    <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2336664" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2336664" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.29937303" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -610,8 +608,6 @@
     </watches-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/views/chat_controller.py" />
-    <entry file="file://$PROJECT_DIR$/views/contact_chat.py" />
     <entry file="file://$PROJECT_DIR$/views/menu_view.py" />
     <entry file="file://$PROJECT_DIR$/views/client_controller.py" />
     <entry file="file://$PROJECT_DIR$/views/client_view.py" />
@@ -886,6 +882,14 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="54">
+          <caret line="3" column="7" lean-forward="false" selection-start-line="3" selection-start-column="7" selection-end-line="3" selection-end-column="7" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/views/login_view.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="126">
@@ -893,6 +897,14 @@
           <folding>
             <element signature="e#0#27#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/logs/tes">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
