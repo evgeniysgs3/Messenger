@@ -2,39 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ea769d7d-9518-4cc7-8284-9c3583efa9b0" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.cache/v/cache/lastfailed" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/client/error/error.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/client/error/errors.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/client/main.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/client/repository/errors.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/client/repository/modeles.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/client/repository/storage.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/client/repository/storage_client.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/config/constants.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/log/decorators.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/log/log_config.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/protocols/jim/error/error.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/protocols/jim/jimprotocol.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/run.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/server/ServerStorage" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/server/errors.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/server/main.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/server/repository/errors.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/server/repository/models.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/server/repository/storage.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/server/repository/test_storage.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/start.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/views/chat_view.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/views/client_controller.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/views/client_view.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/views/contact_chat_controller.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/views/contact_chat_view.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/views/login_view.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/views/main_view.py" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/logs/client.log" afterPath="$PROJECT_DIR$/src/views/add_contact_view.py" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/logs/server.log" afterPath="$PROJECT_DIR$/src/views/add_contact_controller.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/test_server.py" afterPath="$PROJECT_DIR$/tests/test_server.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server.py" afterPath="$PROJECT_DIR$/server.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/views/login_view.py" afterPath="$PROJECT_DIR$/src/views/login_view.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -45,23 +14,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="main.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/client/main.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="165">
-              <caret line="167" column="0" lean-forward="false" selection-start-line="167" selection-start-column="0" selection-end-line="167" selection-end-column="0" />
-              <folding>
-                <element signature="e#0#9#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="client_gui.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="client_gui.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client_gui.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="324">
-              <caret line="18" column="0" lean-forward="false" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
+            <state relative-caret-position="144">
+              <caret line="8" column="16" lean-forward="false" selection-start-line="8" selection-start-column="16" selection-end-line="8" selection-end-column="16" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -93,13 +50,37 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="login_view.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/views/login_view.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="126">
+              <caret line="7" column="36" lean-forward="false" selection-start-line="7" selection-start-column="36" selection-end-line="7" selection-end-column="36" />
+              <folding>
+                <element signature="e#0#27#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="main_view.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/views/main_view.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="36">
-              <caret line="32" column="42" lean-forward="false" selection-start-line="32" selection-start-column="42" selection-end-line="32" selection-end-column="42" />
+            <state relative-caret-position="306">
+              <caret line="17" column="8" lean-forward="false" selection-start-line="17" selection-start-column="8" selection-end-line="17" selection-end-column="8" />
               <folding>
                 <element signature="e#0#33#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="server.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/server.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1656">
+              <caret line="92" column="17" lean-forward="false" selection-start-line="92" selection-start-column="17" selection-end-line="92" selection-end-column="17" />
+              <folding>
+                <element signature="e#0#9#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -143,17 +124,7 @@
         <entry file="file://$PROJECT_DIR$/src/views/messanger_view.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="576">
-              <caret line="66" column="43" lean-forward="true" selection-start-line="66" selection-start-column="43" selection-end-line="66" selection-end-column="43" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="contact_chat_view.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/views/contact_chat_view.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="216">
-              <caret line="13" column="0" lean-forward="true" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
+              <caret line="66" column="43" lean-forward="false" selection-start-line="66" selection-start-column="43" selection-end-line="66" selection-end-column="43" />
               <folding />
             </state>
           </provider>
@@ -229,17 +200,17 @@
         <option value="$PROJECT_DIR$/src/config/constants.py" />
         <option value="$PROJECT_DIR$/src/client/main.py" />
         <option value="$PROJECT_DIR$/src/server/errors.py" />
-        <option value="$PROJECT_DIR$/server.py" />
-        <option value="$PROJECT_DIR$/src/views/login_view.py" />
         <option value="$PROJECT_DIR$/src/views/messanger_controller.py" />
         <option value="$PROJECT_DIR$/src/views/add_contact_view.py" />
         <option value="$PROJECT_DIR$/src/views/contact_chat_controller.py" />
         <option value="$PROJECT_DIR$/src/views/main_view.py" />
         <option value="$PROJECT_DIR$/src/views/add_contact_controller.py" />
+        <option value="$PROJECT_DIR$/server.py" />
+        <option value="$PROJECT_DIR$/src/views/login_view.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="1">
+  <component name="ProjectFrameBounds">
     <option name="x" value="75" />
     <option name="y" value="24" />
     <option name="width" value="1301" />
@@ -285,35 +256,6 @@
             <path>
               <item name="Messenger" type="b2602c69:ProjectViewProjectNode" />
               <item name="Messenger" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Messenger" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Messenger" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Messenger" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Messenger" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Messenger" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Messenger" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="config" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Messenger" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Messenger" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="server" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Messenger" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Messenger" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="views" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -470,7 +412,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="75" y="24" width="1301" height="744" extended-state="1" />
+    <frame x="75" y="24" width="1301" height="744" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2336664" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -840,26 +782,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/server.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="111">
-          <caret line="57" column="46" lean-forward="true" selection-start-line="57" selection-start-column="46" selection-end-line="57" selection-end-column="46" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/views/login_view.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="219">
-          <caret line="45" column="0" lean-forward="false" selection-start-line="45" selection-start-column="0" selection-end-line="45" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#27#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/client/main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="165">
@@ -873,7 +795,7 @@
     <entry file="file://$PROJECT_DIR$/src/views/contact_chat_view.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="216">
-          <caret line="13" column="0" lean-forward="true" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
+          <caret line="13" column="0" lean-forward="false" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -884,16 +806,6 @@
           <caret line="7" column="8" lean-forward="false" selection-start-line="7" selection-start-column="8" selection-end-line="7" selection-end-column="8" />
           <folding>
             <element signature="e#0#27#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/views/main_view.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="36">
-          <caret line="32" column="42" lean-forward="false" selection-start-line="32" selection-start-column="42" selection-end-line="32" selection-end-column="42" />
-          <folding>
-            <element signature="e#0#33#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -929,7 +841,7 @@
     <entry file="file://$PROJECT_DIR$/src/views/messanger_view.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="576">
-          <caret line="66" column="43" lean-forward="true" selection-start-line="66" selection-start-column="43" selection-end-line="66" selection-end-column="43" />
+          <caret line="66" column="43" lean-forward="false" selection-start-line="66" selection-start-column="43" selection-end-line="66" selection-end-column="43" />
           <folding />
         </state>
       </provider>
@@ -944,12 +856,42 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/server.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1656">
+          <caret line="92" column="17" lean-forward="false" selection-start-line="92" selection-start-column="17" selection-end-line="92" selection-end-column="17" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/views/main_view.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="17" column="8" lean-forward="false" selection-start-line="17" selection-start-column="8" selection-end-line="17" selection-end-column="8" />
+          <folding>
+            <element signature="e#0#33#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/client_gui.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="324">
-          <caret line="18" column="0" lean-forward="false" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
+        <state relative-caret-position="144">
+          <caret line="8" column="16" lean-forward="false" selection-start-line="8" selection-start-column="16" selection-end-line="8" selection-end-column="16" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/views/login_view.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="126">
+          <caret line="7" column="36" lean-forward="false" selection-start-line="7" selection-start-column="36" selection-end-line="7" selection-end-column="36" />
+          <folding>
+            <element signature="e#0#27#0" expanded="true" />
           </folding>
         </state>
       </provider>

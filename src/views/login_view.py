@@ -18,7 +18,7 @@ class Login(QDialog):
         h_layout_name.addWidget(self.name)
         # Адрес
         h_layout_address = QHBoxLayout(self)
-        self.server = QLineEdit('127.0.0.1')
+        self.server = QLineEdit('207.154.198.91')
         self.l_address = QLabel("Server:")
         h_layout_address.addWidget(self.l_address)
         h_layout_address.addWidget(self.server)

@@ -90,9 +90,7 @@ class Server:
                 # Добавляем в список сообщение и кто прислал
                 messages.append((data, sock))
             except:
-                # Почему то раняет сервер если клиент через ctrl + c отключился
-                # IndexError: tuple index out of range
-                print('Клиент {} {} отключился'.format(sock.fileno(), sock.getpeername()[0]))
+                #print('Клиент {} {} отключился'.format(sock.fileno(), sock.getpeername()[0]))
                 self._clients.remove(sock)
         # Возвращаем словарь
         return messages
